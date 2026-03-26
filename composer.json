@@ -1,0 +1,21 @@
+{
+    "name": "payroad/internal-card-provider",
+    "description": "Internal (mock) card payment provider for Payroad — for demo and testing",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "payroad/payroad-core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Payroad\\Provider\\InternalCard\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../payroad-core"
+        }
+    ]
+}
