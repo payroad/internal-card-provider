@@ -23,7 +23,7 @@ use Payroad\Provider\InternalCard\Data\InternalCardRefundData;
 /**
  * Mock card payment provider for demo and testing.
  *
- * Two modes, controlled via factory config:
+ * Three modes, controlled via factory config:
  *
  *   mode: charge (default)
  *     PENDING → PROCESSING → SUCCEEDED  (immediate sync charge)
@@ -33,7 +33,12 @@ use Payroad\Provider\InternalCard\Data\InternalCardRefundData;
  *     captureAttempt() → PROCESSING → SUCCEEDED
  *     voidAttempt()    → CANCELED
  *
- * Implements CapturableCardProviderInterface in both modes so the
+ *   mode: async
+ *     PENDING → PROCESSING  (stops here — simulates async provider)
+ *     Completion arrives via webhook: PROCESSING → SUCCEEDED
+ *     Useful for demonstrating the webhook flow without a real provider.
+ *
+ * Implements CapturableCardProviderInterface in all modes so the
  * authorize + capture flow can always be tested via the use case layer.
  */
 final class InternalCardProvider implements CapturableCardProviderInterface
@@ -61,6 +66,8 @@ final class InternalCardProvider implements CapturableCardProviderInterface
 
         if ($this->mode === 'authorize') {
             $attempt->applyTransition(AttemptStatus::AUTHORIZED, 'mock_authorized');
+        } elseif ($this->mode === 'async') {
+            $attempt->applyTransition(AttemptStatus::PROCESSING, 'mock_processing');
         } else {
             $attempt->applyTransition(AttemptStatus::PROCESSING, 'mock_processing');
             $attempt->applyTransition(AttemptStatus::SUCCEEDED, 'mock_succeeded');
