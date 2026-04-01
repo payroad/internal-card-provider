@@ -65,12 +65,12 @@ final class InternalCardProvider implements CapturableCardProviderInterface
         $attempt->setProviderReference('mock_card_' . $id->value);
 
         if ($this->mode === 'authorize') {
-            $attempt->applyTransition(AttemptStatus::AUTHORIZED, 'mock_authorized');
+            $attempt->markAuthorized('mock_authorized');
         } elseif ($this->mode === 'async') {
-            $attempt->applyTransition(AttemptStatus::PROCESSING, 'mock_processing');
+            $attempt->markProcessing('mock_processing');
         } else {
-            $attempt->applyTransition(AttemptStatus::PROCESSING, 'mock_processing');
-            $attempt->applyTransition(AttemptStatus::SUCCEEDED, 'mock_succeeded');
+            $attempt->markProcessing('mock_processing');
+            $attempt->markSucceeded('mock_succeeded');
         }
 
         return $attempt;
@@ -104,7 +104,7 @@ final class InternalCardProvider implements CapturableCardProviderInterface
         $data   = new InternalCardRefundData($context->reason);
         $refund = CardRefund::create($id, $paymentId, $originalAttemptId, $providerName, $amount, $data);
         $refund->setProviderReference('mock_refund_' . $id->value);
-        $refund->applyTransition(RefundStatus::SUCCEEDED, 'mock_refund_completed');
+        $refund->markSucceeded('mock_refund_completed');
 
         return $refund;
     }
